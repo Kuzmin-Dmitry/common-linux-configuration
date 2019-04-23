@@ -12,8 +12,8 @@
   - name: "Choose platform based tasks"
     include_tasks: "{{ platform }}"
     with_first_found:
-      - "system/{{ ansible_os_family }}.yml"
-      - "system/not-supported.yml"
+      - "{{ ansible_lsb.id }}.yml"
+      - "not-supported.yml"
     loop_control:
       loop_var: platform
 
@@ -24,6 +24,24 @@
         # human-readable stdout/stderr results display
         bin_ansible_callbacks=True
         stdout_callback = yaml
+
+  - blockinfile:
+      path: '/home/{{ ssh_user }}/.bash_profile'
+      insertafter: '\[defaults\]'
+      block: |
+        # Get the aliases and functions
+        if [ -f ~/.bashrc ]; then
+          . ~/.bashrc
+        fi
+
+        # User specific environment and startup programs
+        PATH=$PATH:$HOME/bin
+        export PS1="\[\033[36m\]\u\[\033[m\]@\[\033[32m\]\h:\[\033[33;1m\]\w\[\033[m\]\$ "
+        export CLICOLOR=1
+        export LSCOLORS=ExFxBxDxCxegedabagacad
+        alias ls='ls -GFh'
+
+        export PATH
 
   - block:
 

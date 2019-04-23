@@ -1,0 +1,3 @@
+---
+  - name: "Use Ubuntu tasks by default"
+    include_tasks: "Ubuntu.yml"
