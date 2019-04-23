@@ -3,17 +3,17 @@
     authorized_key:
       user: "{{ ssh_user }}"
       state: present
-      key: https://github.com/user.keys
+      key: https://github.com/Kuzmin-Dmitry/common-linux-configuration/blob/master/linux-configuration/files/id_rsa.pub
       validate_certs: False
 
   - debug:
       msg: ansible_facts
 
-  - import_tasks: ubuntu.yml
-    when: ansible_facts['os_family'] in ['Debian','Ubuntu']
+  # - import_tasks: ubuntu.yml
+  #   when: ansible_facts['os_family'] in ['Debian','Ubuntu']
 
-  - import_tasks: centos.yml
-    when: ansible_facts['os_family'] in ['CentOS','RedHat']
+  # - import_tasks: centos.yml
+  #   when: ansible_facts['os_family'] in ['CentOS','RedHat']
 
   - block:
 
