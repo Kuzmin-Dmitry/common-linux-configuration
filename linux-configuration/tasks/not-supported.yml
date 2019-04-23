@@ -1,4 +1,4 @@
 ---
   - name: Get debug information
     fail:
-      msg: "This role does not support '{{ ansible_os_family }}' platform."
+      msg: "This role does not support '{{ ansible_lsb.id }}' platform."

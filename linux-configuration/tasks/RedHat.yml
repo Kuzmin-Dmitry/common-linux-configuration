@@ -1,8 +1,17 @@
 ---
-  - name: install software with yum
-    raw: "yum -y install {{ bootstrap_yum_packages }}"
-    register: yumresult
-    changed_when:
-      - "'Nothing' not in yumresult.stdout"
-    until: yumresult is succeeded
-    retries: 3
+  - name: "Become section"
+    block:
+      - name: Update software with yum
+        raw: "yum -y update {{ bootstrap_yum_packages }}"
+        register: yumresult
+        changed_when:
+          - "'Nothing' not in yumresult.stdout"
+        until: yumresult is succeeded
+        retries: 3
+
+      - name: "Install software"
+        package:
+          name: "{{ bootstrap_yum_packages }}"
+          state: "present"
+
+    become: True

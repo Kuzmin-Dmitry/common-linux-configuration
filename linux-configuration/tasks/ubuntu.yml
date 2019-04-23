@@ -1,8 +1,17 @@
 ---
-  - name: install software with apt-get
-    raw: "apt-get update ; apt-get -y install {{ bootstrap_apt_packages }}"
-    register: apt_getresult
-    changed_when:
-      - "' 0 newly installed' not in apt_getresult.stdout"
-    until: apt_getresult is succeeded
-    retries: 3
+  - name: "Become section"
+    block:
+      - name: Update software with apt-get
+        raw: "apt-get update ; apt-get -y upgrade"
+        register: apt_getresult
+        changed_when:
+          - "' 0 newly installed' not in apt_getresult.stdout"
+        until: apt_getresult is succeeded
+        retries: 3
+
+      - name: "Install software"
+        package:
+          name: "{{ bootstrap_apt_packages }}"
+          state: "present"
+
+    become: True
