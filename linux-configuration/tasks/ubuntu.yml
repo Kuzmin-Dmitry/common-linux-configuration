@@ -1,9 +1,6 @@
 ---
   - name: install software with apt-get
     raw: "apt-get update ; apt-get -y install {{ bootstrap_apt_packages }}"
-    when:
-      - apt_get.rc == 0
-      - zypper.rc != 0
     register: apt_getresult
     changed_when:
       - "' 0 newly installed' not in apt_getresult.stdout"
