@@ -1,0 +1,10 @@
+---
+  - name: install software with yum
+    raw: "yum -y install {{ bootstrap_yum_packages }}"
+    when:
+      - yum.rc == 0
+    register: yumresult
+    changed_when:
+      - "'Nothing' not in yumresult.stdout"
+    until: yumresult is succeeded
+    retries: 3

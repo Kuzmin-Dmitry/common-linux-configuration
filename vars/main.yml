@@ -1,0 +1,7 @@
+---
+# vars file for bootstrap
+bootstrap_yum_packages:
+  - unzip
+
+bootstrap_apt_packages:
+  - unzip
