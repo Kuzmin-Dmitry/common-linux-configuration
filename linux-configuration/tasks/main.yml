@@ -1,19 +1,29 @@
 ---
   - name: Set authorized key taken from file
     authorized_key:
-      user: "{{ ssh_user }}"
+      user: '{{ ssh_user }}'
       state: present
-      key: https://github.com/Kuzmin-Dmitry/common-linux-configuration/blob/master/linux-configuration/files/id_rsa.pub
+      key: https://raw.githubusercontent.com/Kuzmin-Dmitry/common-linux-configuration/master/linux-configuration/files/id_rsa.pub
       validate_certs: False
 
   - debug:
-      msg: ansible_facts
+      msg: '{{ ansible_facts }}'
 
-  # - import_tasks: ubuntu.yml
-  #   when: ansible_facts['os_family'] in ['Debian','Ubuntu']
+  - name: "Choose platform based tasks"
+    include_tasks: "{{ platform }}"
+    with_first_found:
+      - "system/{{ ansible_os_family }}.yml"
+      - "system/not-supported.yml"
+    loop_control:
+      loop_var: platform
 
-  # - import_tasks: centos.yml
-  #   when: ansible_facts['os_family'] in ['CentOS','RedHat']
+  - blockinfile:
+      path: /etc/ansible/ansible.cfg
+      insertafter: '\[defaults\]'
+      block: |
+        # human-readable stdout/stderr results display
+        bin_ansible_callbacks=True
+        stdout_callback = yaml
 
   - block:
 
