@@ -3,8 +3,13 @@
     authorized_key:
       user: '{{ ssh_user }}'
       state: present
-      key: https://raw.githubusercontent.com/Kuzmin-Dmitry/common-linux-configuration/master/linux-configuration/files/id_rsa.pub
+      key: '{{ ssh_key }}'
       validate_certs: False
+      with_first_found:
+        - 'https://raw.githubusercontent.com/Kuzmin-Dmitry/common-linux-configuration/master/linux-configuration/files/id_rsa.pub'
+        - 'id_rsa.pub'
+      loop_control:
+        loop_var: ssh_key
 
   - debug:
       msg: '{{ ansible_facts }}'
@@ -12,8 +17,8 @@
   - name: "Choose platform based tasks"
     include_tasks: "{{ platform }}"
     with_first_found:
-      - "{{ ansible_lsb.id }}.yml"
-      - "not-supported.yml"
+      - '{{ ansible_lsb.id }}.yml'
+      - 'not-supported.yml'
     loop_control:
       loop_var: platform
 
@@ -25,9 +30,21 @@
         bin_ansible_callbacks=True
         stdout_callback = yaml
 
+  - name: Get home dir path
+    set_fact: 
+      home_dir: lookup('env','HOME')
+
+  - name: Create Bash profile
+    file:
+      state: touch
+      path: '{{ home_dir }}/.bash_profile'
+      owner: '{{ ssh_user }}'
+      group: '{{ ssh_user }}'
+      modification_time: 'preserve'
+      access_time: 'preserve'
+
   - blockinfile:
-      path: '/home/{{ ssh_user }}/.bash_profile'
-      insertafter: '\[defaults\]'
+      path: '{{ home_dir }}/.bash_profile'
       block: |
         # Get the aliases and functions
         if [ -f ~/.bashrc ]; then
@@ -40,7 +57,6 @@
         export CLICOLOR=1
         export LSCOLORS=ExFxBxDxCxegedabagacad
         alias ls='ls -GFh'
-
         export PATH
 
   - block:

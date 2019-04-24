@@ -2,7 +2,7 @@
   - name: "Become section"
     block:
       - name: Update software with yum
-        raw: "yum -y update {{ bootstrap_yum_packages }}"
+        raw: 'yum -y update {{ bootstrap_yum_packages }}'
         register: yumresult
         changed_when:
           - "'Nothing' not in yumresult.stdout"
@@ -11,7 +11,7 @@
 
       - name: "Install software"
         package:
-          name: "{{ bootstrap_yum_packages }}"
-          state: "present"
+          name: '{{ bootstrap_yum_packages }}'
+          state: 'present'
 
     become: True
